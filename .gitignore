@@ -1,0 +1,8 @@
+.idea
+thuml2020
+thuml2020/test.csv
+thuml2020/train.csv
+dataset
+.DS_Store
+model
+__pycache__
