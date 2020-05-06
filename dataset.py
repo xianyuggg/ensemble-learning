@@ -56,7 +56,7 @@ def divide_set():
     np.save('dataset/y_validation.npy', y_validation)
 
 
-def laod_data():
+def load_data():
     x_train = np.load('dataset/x_train.npy')
     y_train = np.load('dataset/y_train.npy')
     x_validation = np.load('dataset/x_validation.npy')
@@ -65,3 +65,8 @@ def laod_data():
     return x_train, y_train, x_validation, y_validation, x_test
 
 
+def load_test_data():
+    """
+    :return: x_test
+    """
+    return np.load('dataset/x_test.npy')
