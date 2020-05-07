@@ -3,6 +3,7 @@ import numpy as np
 import os
 from sklearn.model_selection import train_test_split
 from word2vec import get_train_vecs
+from settings import EnsembleConfig
 
 data_file = 'raw_data/train.csv'
 test_file = 'raw_data/test.csv'
@@ -31,7 +32,7 @@ def text_parse(bigString):
         return []
 
 
-def divide_set():
+def divide_set(config: EnsembleConfig):
     data_df = pd.read_csv(data_file, sep='\t')
 
     x = []
@@ -51,9 +52,10 @@ def divide_set():
     for review in test_df['reviewText']:
         x_test.append(text_parse(review))
 
-    get_train_vecs(x_train, x_validation, x_test)   # generate word2vec and related dataset
+    get_train_vecs(x_train, x_validation, x_test, config)   # generate word2vec and related dataset
     np.save('dataset/y_train.npy', y_train)
     np.save('dataset/y_validation.npy', y_validation)
+    print("Divide set complete!")
 
 
 def load_data():
