@@ -4,11 +4,11 @@ import os
 from sklearn.model_selection import train_test_split
 from word2vec import get_train_vecs
 
-data_file = 'thuml2020/train.csv'
-test_file = 'thuml2020/test.csv'
+data_file = 'raw_data/train.csv'
+test_file = 'raw_data/test.csv'
 
 stopwords = set()
-with open('thuml2020/stopwords.txt', 'r') as file:
+with open('raw_data/stopwords.txt', 'r') as file:
     for line in file:
         stopwords.add(line.strip())
     file.close()
@@ -51,7 +51,7 @@ def divide_set():
     for review in test_df['reviewText']:
         x_test.append(text_parse(review))
 
-    get_train_vecs(x_train, x_validation, x_test)
+    get_train_vecs(x_train, x_validation, x_test)   # generate word2vec and related dataset
     np.save('dataset/y_train.npy', y_train)
     np.save('dataset/y_validation.npy', y_validation)
 

@@ -4,7 +4,8 @@ import numpy as np
 import os
 
 
-def decision_tree_train(x_train, y_train, x_validation, y_validation, ensemble_mode: str, tree_id: int):
+def decision_tree_train(x_train, y_train, x_validation, y_validation, ensemble_mode: str, tree_id: int = '',
+                        sample_weights=None, raw_x_train=None, raw_y_train=None):
     model = tree.DecisionTreeClassifier(class_weight='balanced')
 
     model.fit(x_train, y_train)
@@ -16,7 +17,20 @@ def decision_tree_train(x_train, y_train, x_validation, y_validation, ensemble_m
             os.mkdir('model/' + ensemble_mode)
         joblib.dump(model, 'model/' + ensemble_mode + '/dtree_' + str(tree_id) + '.pkl')
     elif ensemble_mode == 'ADA_BOOST_M1':
-        pass
+        raw_pred = model.predict(raw_x_train)
+        err = 1. * np.dot(np.array(raw_pred) != np.array(raw_y_train), sample_weights)
+        if err > 0.5:
+            return sample_weights, err
+        beta = err / (1.0 - err)
+        update_weights = [1 if raw_y_train[i] != raw_pred[i] else beta for i in range(0, len(raw_x_train))]
+        sample_weights = np.multiply(sample_weights, update_weights)
+        sample_weights = sample_weights / np.sum(sample_weights)  # normalization
+        if not os.path.exists('model/' + ensemble_mode):
+            os.mkdir('model/' + ensemble_mode)
+        joblib.dump(model, 'model/' + ensemble_mode + '/dtree_' + str(tree_id) + '.pkl')
+        with open('model/' + ensemble_mode + '/' + 'beta_' + str(tree_id) + '.txt', 'w') as f:
+            f.write(str(beta))
+        return sample_weights, err
     elif ensemble_mode == "SINGLE":
         joblib.dump(model, 'model/dtree.pkl')
     else:
