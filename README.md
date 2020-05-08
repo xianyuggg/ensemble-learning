@@ -1,5 +1,5 @@
 # Ensemble Learning
-Course project for Machine Learning, 2020 spring, which is a implements Ensemble Learning Algorithm(Bagging and AdaBoost.M1) based on sklearn's SVM and D-TREE.
+Course project for Machine Learning, 2020 spring, which implements Ensemble Learning Algorithm(Bagging and AdaBoost.M1) based on sklearn's SVM and D-TREE.
 
 Details can be found in report
 
