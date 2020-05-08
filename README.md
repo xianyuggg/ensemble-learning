@@ -3,6 +3,8 @@ Course project for Machine Learning, 2020 spring, which is a implements Ensemble
 
 Details can be found in report
 
+Kaggle用户名为XianyuGu，RMSE为0.98878
+
 Requirements:
 + scikit-learn == 0.21.3
 + gensim == 3.8.3
