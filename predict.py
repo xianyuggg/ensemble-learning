@@ -36,7 +36,7 @@ def validation(x_validation, y_validation, config: EnsembleConfig):
                 if idx + 1 > ada_len:
                     ada_len = idx + 1
                 with open(get_model_dir(config) + filename) as file:
-                    weight[idx] = math.log(1 / float(file.read()))
+                    weight[idx] = 0.5 * math.log(1 / float(file.read()))
 
         weight = weight[0:ada_len]
         res = []

@@ -3,7 +3,7 @@ import joblib
 import numpy as np
 import os
 from settings import EnsembleConfig, get_model_dir
-from sklearn.metrics import mean_squared_error
+from sklearn.metrics import mean_squared_error, accuracy_score
 import math
 
 def decision_tree_train(x_train, y_train, x_validation, y_validation, config: EnsembleConfig, tree_id: int = '',
@@ -19,9 +19,12 @@ def decision_tree_train(x_train, y_train, x_validation, y_validation, config: En
     elif config.ensemble_mode == 'ADA_BOOST_M1':
         raw_pred = model.predict(raw_x_train)
         err = 1. * np.dot(np.array(raw_pred) != np.array(raw_y_train), sample_weights)
-        if err > 0.5:
+        print("current model(%s) err: " % str(config), err)
+        print("current model(%s) acc on training set: " % str(config), 1 - accuracy_score(raw_pred, raw_y_train))
+        print("current model(%s) acc on validation: " % str(config), 1 - accuracy_score(model.predict(x_validation), y_validation))
+        if err > 0.6:
             return sample_weights, err
-        beta = err / (1.0 - err)
+        beta = err / (1.3 - err)
         update_weights = [1 if raw_y_train[i] != raw_pred[i] else beta for i in range(0, len(raw_x_train))]
         sample_weights = np.multiply(sample_weights, update_weights)
         sample_weights = sample_weights / np.sum(sample_weights)  # normalization

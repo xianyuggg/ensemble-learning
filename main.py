@@ -6,7 +6,7 @@ from settings import EnsembleConfig
 
 # DTREE, SVM
 # BAGGING, ADA_BOOST_M1, SINGLE
-config = EnsembleConfig(bagging_times=50, ada_times=20, classifier_mode='DTREE', ensemble_mode='BAGGING', external_w2v=False, tf_idf=False)
+config = EnsembleConfig(bagging_times=50, ada_times=30, classifier_mode='DTREE', ensemble_mode='ADA_BOOST_M1', external_w2v=False, tf_idf=False)
 
 # raw_data can be found in raw_data/test.csv, train.csv...
 # divide_set(config)

@@ -37,6 +37,6 @@ def train(x_train: list, y_train: list, x_validation: list, y_validation: list, 
             y_sample = y_train[sample_idxs]
             sample_weights, err = train_func(x_sample, y_sample, x_validation, y_validation, config, i,
                                              sample_weights, x_train, y_train)
-            if err > 0.5:
+            if err > 0.6:
                 break
             i += 1

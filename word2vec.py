@@ -4,7 +4,7 @@ import os
 from sklearn.preprocessing import scale
 from settings import EnsembleConfig
 
-N_DIM = 256
+N_DIM = 128
 
 
 def build_word_vec(text, size, imdb_w2v, tfidf_vocab=None, tfidf_matrix=None):
