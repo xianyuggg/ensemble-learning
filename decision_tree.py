@@ -3,7 +3,8 @@ import joblib
 import numpy as np
 import os
 from settings import EnsembleConfig, get_model_dir
-
+from sklearn.metrics import mean_squared_error
+import math
 
 def decision_tree_train(x_train, y_train, x_validation, y_validation, config: EnsembleConfig, tree_id: int = '',
                         sample_weights=None, raw_x_train=None, raw_y_train=None):
@@ -27,6 +28,8 @@ def decision_tree_train(x_train, y_train, x_validation, y_validation, config: En
         joblib.dump(model, get_model_dir(config) + 'dtree_' + str(tree_id) + '.pkl')
         with open(get_model_dir(config) + 'beta_' + str(tree_id) + '.txt', 'w') as f:
             f.write(str(beta))
+        print("current model(%s) rmse: " % str(config),
+              math.sqrt(mean_squared_error(model.predict(x_validation), y_validation)))
         return sample_weights, err
     elif config.ensemble_mode == "SINGLE":
         joblib.dump(model, get_model_dir(config) + 'dtree.pkl')
@@ -34,7 +37,8 @@ def decision_tree_train(x_train, y_train, x_validation, y_validation, config: En
         print("unimplemented in decision_tree_train!")
         exit(0)
 
-    print("current model accuracy on validating set: ", model.score(x_validation, y_validation))
+    print("current model(%s) rmse: " % str(config),
+          math.sqrt(mean_squared_error(model.predict(x_validation), y_validation)))
 
 
 def decision_tree_predict(words_data, config: EnsembleConfig, model_id=''):
@@ -45,7 +49,7 @@ def decision_tree_predict(words_data, config: EnsembleConfig, model_id=''):
         model = joblib.load(get_model_dir(config) + 'dtree_' + str(model_id) + '.pkl')
         result = model.predict(words_data)
     elif config.ensemble_mode == 'SINGLE':
-        model = joblib.load(get_model_dir(config) + 'tree_model.pkl')
+        model = joblib.load(get_model_dir(config) + 'dtree.pkl')
         result = model.predict(words_data)
     else:
         print("unimplemented in decision_tree_predict!")

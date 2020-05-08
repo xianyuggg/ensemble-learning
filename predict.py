@@ -5,7 +5,7 @@ import math
 from settings import get_model_dir
 
 
-def predict(x_validation, config: EnsembleConfig, model_id):
+def predict(x_validation, config: EnsembleConfig, model_id=None):
     from decision_tree import decision_tree_predict
     from svm import svm_predict
     if config.classifier_mode == 'DTREE':
@@ -23,8 +23,8 @@ def validation(x_validation, y_validation, config: EnsembleConfig):
             res.append(predict(x_validation, config, model_id))
         # get most frequent rating
         res = np.array(res).T
-        y_predict = [get_max_appear_num(item) for item in res]
-        print(str(config) + ' acc on validation set: ', accuracy_score(y_validation, y_predict))
+        y_predict = [np.mean(item) for item in res]
+        # print(str(config) + ' acc on validation set: ', accuracy_score(y_validation, y_predict))
 
     elif config.ensemble_mode == 'ADA_BOOST_M1':
         files = os.listdir(get_model_dir(config))
@@ -56,8 +56,11 @@ def validation(x_validation, y_validation, config: EnsembleConfig):
         #         tmp[res[i][j]] += weight[j]
         #     y_predict.append(np.argmax(tmp))
         # print(str(config), ' acc on validation set: ', accuracy_score(y_validation, y_predict))
-        from sklearn.metrics import mean_squared_error
-        print(str(config), ' rmse on validation set: ', math.sqrt(mean_squared_error(y_predict, y_validation)))
+    elif config.ensemble_mode == 'SINGLE':
+        y_predict = predict(x_validation, config)
+    from sklearn.metrics import mean_squared_error
+    print(str(config), ' rmse on validation set: ', math.sqrt(mean_squared_error(y_predict, y_validation)))
+
 
 def test(x_test, config: EnsembleConfig):
     y_predict = []
@@ -67,7 +70,8 @@ def test(x_test, config: EnsembleConfig):
             res.append(predict(x_test, config, model_id))
         # get most frequent rating
         res = np.array(res).T
-        y_predict = [get_max_appear_num(item) for item in res]
+        y_predict = [np.mean(item) for item in res]
+        # y_predict = [get_max_appear_num(item) for item in res]
 
     elif config.ensemble_mode == 'ADA_BOOST_M1':
         files = os.listdir(get_model_dir(config))
@@ -96,6 +100,9 @@ def test(x_test, config: EnsembleConfig):
         #     for j in range(0, ada_len):
         #         tmp[res[i][j]] += weight[j]
         #     y_predict.append(np.argmax(tmp))
+    elif config.ensemble_mode == 'SINGE':
+        y_predict = predict(x_test, config)
+
     if not os.path.exists('result'):
         os.mkdir('result')
     with open('result/' + str(config) + "-result.csv", 'w') as file:

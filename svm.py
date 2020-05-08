@@ -3,6 +3,8 @@ import os
 import joblib
 import numpy as np
 from settings import get_model_dir, EnsembleConfig
+from sklearn.metrics import mean_squared_error
+import math
 
 
 def svm_train(x_train, y_train, x_validation, y_validation, config: EnsembleConfig, svm_id: int = '',
@@ -20,23 +22,22 @@ def svm_train(x_train, y_train, x_validation, y_validation, config: EnsembleConf
         beta = err / (1.0 - err)
         update_weights = [1 if raw_y_train[i] != raw_pred[i] else beta for i in range(0, len(raw_x_train))]
         sample_weights = np.multiply(sample_weights, update_weights)
-        sample_weights = sample_weights / np.sum(sample_weights)    # normalization
+        sample_weights = sample_weights / np.sum(sample_weights)  # normalization
         joblib.dump(model, get_model_dir(config) + 'svm_' + str(svm_id) + '.pkl')
         with open(get_model_dir(config) + 'beta_' + str(svm_id) + '.txt', 'w') as f:
             f.write(str(beta))
-        return sample_weights, err
+        print("current model(%s) rmse: " % str(config),
+              math.sqrt(mean_squared_error(model.predict(x_validation), y_validation)))
 
+        return sample_weights, err
     elif config.ensemble_mode == "SINGLE":
         joblib.dump(model, get_model_dir(config) + 'svm_model.pkl')
     else:
         print("unimplemented in svm_train!")
         exit(0)
+    print("current model(%s) rmse: "% str(config), math.sqrt(mean_squared_error(model.predict(x_validation), y_validation)))
 
-    print("current model(svm, %s) accuracy on validating set: " % config.ensemble_mode,
-          model.score(x_validation, y_validation))
-
-
-def svm_predict(words_data, config: EnsembleConfig, model_id=''):
+def svm_predict(words_data, config: EnsembleConfig, model_id: int = None):
     if config.ensemble_mode == 'BAGGING':
         model = joblib.load(get_model_dir(config) + 'svm_' + str(model_id) + '.pkl')
         result = model.predict(words_data)
